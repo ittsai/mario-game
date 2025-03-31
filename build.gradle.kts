@@ -1,7 +1,7 @@
 plugins {
     id("java")
+    id("application")
 }
-
 group = "com.practice.game"
 version = "1.0-SNAPSHOT"
 
@@ -41,4 +41,20 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+
+application {
+    mainClass.set("com.practice.game.Main")
+    applicationDefaultJvmArgs = listOf("-XstartOnFirstThread")
+}
+
+tasks.jar {
+    manifest {
+        attributes(
+            "Main-Class" to "com.practice.game.Main"
+        )
+    }
+
+    from(configurations.runtimeClasspath.get().filter { it.isDirectory }.map { it }) // to include all the dependency
+    from(configurations.runtimeClasspath.get().filter { !it.isDirectory }.map { zipTree(it) })
 }
